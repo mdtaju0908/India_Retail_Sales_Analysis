@@ -4,8 +4,7 @@ An interactive Streamlit dashboard for exploring the supplied India-focused reta
 
 ## Dashboard
 
-- Render service: [dadv-a6-project.onrender.com](https://dadv-a6-project.onrender.com)
-- Custom domain being configured: `dadvproject.mdtaju.tech`
+- Custom domain being configured: `https://dad-a6-project.mdtaju.tech`
 
 The custom domain works after its Cloudflare DNS record is valid and the hostname is added and verified in Render. See [Deployment](#deployment).
 
