@@ -1,33 +1,77 @@
-# India Retail Sales Analysis
+# Retail Sales Analysis and Visualization Using Python
+
+## Title page
+
+**Student name:** [Enter student name]  
+**Enrollment number:** [Enter enrollment number]  
+**Department:** [Enter department]  
+**University:** [Enter university]  
+**Academic year:** [Enter academic year]
 
 ## Abstract
 
-This project uses only the supplied `retail_sales_raw.csv` to provide a filterable Streamlit dashboard and an Excel workbook. It presents sales and profit as recorded in the CSV and compares monthly results, categories, regions, cities, customer segments and shipping modes. A data-quality page documents exclusions and source inconsistencies.
+This project implements an interactive dashboard for the supplied Online Retail transaction workbook. It validates the expected schema, removes exact duplicate rows from the working data, parses dates and numeric measures, classifies eligible positive sales separately from returns, cancellations, and invalid rows, and presents gross sales metrics with filters. The dashboard includes trend, product, country, customer, return, data-quality, and raw-data views. All sales value is computed as quantity multiplied by unit price; it is not profit. Returns and cancellations remain separately visible because the workbook does not provide a universally validated reconciliation to original sale lines.
 
-## Dataset
+## 1. Introduction
 
-The CSV contains 1,800 order rows and 13 fields: Order ID, Order Date, Region, City, Customer Segment, Category, Sub-Category, Quantity, Unit Price, Discount, Sales, Profit and Ship Mode. Dates run from 1 January 2024 to 30 June 2025. The data contains four regions and 16 cities. It has no Country or Currency column; the India-focused view follows the Indian city names supplied in the file, and numeric values are shown without adding a currency symbol or conversion.
+Retail transaction data can reveal sales patterns by period, product, geography, and identifiable customer. A reusable analysis pipeline and interactive visual interface make these views easier to inspect while documenting the limits of the underlying data.
 
-All rows have complete fields and the source contains no exact duplicate rows. All 1,800 rows satisfy the current validation rules. Ninety rows contain negative profit. In 220 rows, the source Sales differs by more than 0.02 from Quantity × Unit Price × (1 − Discount). The dashboard uses the provided Sales and Profit columns without overwriting or reconciling them.
+## 2. Problem statement
 
-## Method
+The project addresses the difficulty of exploring a large transaction workbook while keeping definitions consistent and making data exclusions and return/cancellation treatment transparent.
 
-The CSV loader validates the expected 13 columns. Preparation trims text, parses order dates and numeric measures, removes exact duplicate rows from the working frame and flags valid orders. An order is valid when required dimensions are present, numeric measures and date parse successfully, quantity is positive, unit price is nonnegative, discount is between 0 and 1, and source sales are nonnegative. Negative profit is retained.
+## 3. Objectives
 
-Pandas aggregations calculate totals and group results by month, region, city, category, sub-category, customer segment and shipping mode. Streamlit filters all views by date, region, city, category, segment and order ID. Plotly displays monthly trends, category mix, and regional, city, segment and shipping comparisons.
+- Validate and prepare the provided transaction data without modifying the source workbook.
+- Calculate gross positive-sales measures and aggregate trends.
+- Compare top products, countries, and identifiable customers.
+- Provide combined filters, CSV export, and data-quality details.
+- Test core cleaning and aggregation behavior using small synthetic fixtures.
 
-## Metrics
+## 4. Dataset description
 
-For the supplied data, total Sales is 64,511,584.37, total Profit is 6,285,957.11, profit margin is 9.74%, order count is 1,800, and units sum to 7,253. These totals are generated from the source Sales and Profit fields; currency is unspecified.
+The workbook is `data/Online Retail.xlsx`. The application checks for `InvoiceNo`, `StockCode`, `Description`, `Quantity`, `InvoiceDate`, `UnitPrice`, `CustomerID`, and `Country` before analysis. Inspection of the supplied workbook found 541,909 data rows, 5,268 exact duplicate rows, 1,454 missing Description values, and 135,080 missing CustomerID values. The date range is 1 December 2010 08:26 through 9 December 2011 12:50. Pandas read InvoiceNo, StockCode, Description, and Country as text/object types; Quantity as int64; InvoiceDate as datetime64; and UnitPrice and CustomerID as float64. The runtime Data Quality section also displays original data types, missing values, and classification counts.
 
-## Workbook
+## 5. Methodology
 
-The output workbook contains Overview, Region Summary, City Summary, Category Summary, Monthly Summary and Raw Data. The Raw Data sheet includes all 1,800 supplied rows and 13 original columns. Summary sheets aggregate valid rows.
+The application loads the first worksheet with OpenPyXL through Pandas, validates the required columns, removes exact duplicate rows, normalizes whitespace in text dimensions, safely parses dates and numeric values, and assigns each remaining row a record type. Vectorized Pandas grouping computes the dashboard metrics. Streamlit applies global filters before downstream KPIs and visualizations are computed.
 
-## Limitations
+## 6. Data preprocessing
 
-The source does not identify currency or include an explicit Country field. The region and city labels are used for the India-focused analysis. Sales differs from the simple quantity-price-discount calculation for some rows; the provided Sales value remains authoritative for dashboard totals, and the mismatch count is disclosed. The analysis is descriptive and does not establish cause and effect.
+Rows are classified in order: invoice IDs beginning with `C` are cancellations; valid dated negative-quantity records with positive unit price are returns; valid dated positive-quantity records with positive unit price and a non-cancelled invoice are eligible sales; remaining rows are invalid for those sales metrics. Missing CustomerID is retained in sales totals, but excluded from customer rankings. Exact duplicates retain the first row. The audit records input and post-deduplication counts, classified row counts, invalid price/date counts, original missing values, and date range.
 
-## Verification
+## 7. Exploratory data analysis
 
-Automated tests cover source-column validation, duplicate removal, date and monthly aggregation, category totals, negative-profit retention, invalid quantity exclusion and empty data. Run them with `\.venv\Scripts\python.exe -m pytest` from the project directory.
+The dashboard computes monthly and daily gross sales trends, monthly quantity, top products by quantity and value, country sales and quantity, average sales per invoice, and customer rankings for identifiable customers. The Overview section highlights the highest-sales month and country under current filters. Results update with the global date, country, product, and invoice filters.
+
+## 8. Visualizations and findings
+
+Plotly line charts show monthly and daily trends. Horizontal bars compare products and countries. A donut chart shows the share of gross sales from the leading products. Tooltips expose values and dimensions. Actual workbook analysis under the documented rules found gross positive sales of **£10,642,110.80**, **5,572,420** units, **19,960** distinct sales invoices, **3,922** products, **38** countries, and **4,338** identifiable customers. Average gross sales per eligible invoice were **£533.17**. November 2011 was the strongest month with **£1,503,866.78**. The United Kingdom led country sales with **£9,001,744.09**. There were 9,251 cancellation rows across 3,836 invoice numbers, with £893,979.73 absolute cancellation line value. The separate return count is zero because negative-quantity records in this workbook use cancellation invoice numbers and are classified as cancellations. This cancellation line value is not subtracted from gross sales. These findings are computed from the supplied workbook, not hard-coded in dashboard calculations.
+
+## 9. System design and implementation
+
+- `data_loader.py`: Excel loading and required-column validation.
+- `data_cleaning.py`: preparation, record classification, and audit generation.
+- `analysis.py`: vectorized metrics and aggregations.
+- `app.py`: Streamlit pages, global filters, charts, preview, and CSV export.
+- `tests/test_analysis.py`: focused synthetic unit tests.
+
+## 10. Testing
+
+Tests cover gross sales, duplicate removal, date parsing, cancellation identification, missing customer IDs, monthly aggregation, product ranking, empty data, missing columns, and return/sale separation. All eight tests passed with Pytest in the configured 64-bit project environment. Streamlit and Plotly dependencies are also installed. The actual data analysis completed against the supplied workbook using Pandas and OpenPyXL.
+
+## 11. Limitations
+
+No product costs or margin data are available, so profit cannot be inferred. Returns and cancellations are not reconciled into net sales because a validated line-level relationship to original sales is not guaranteed. Invoice counts are not customer counts. Customer analysis necessarily omits rows with missing CustomerID. The analysis is descriptive and cannot establish causal effects or customer satisfaction.
+
+## 12. Conclusion
+
+The application provides a modular and filterable way to inspect the supplied retail transactions while separating eligible gross sales from returns, cancellations, and invalid rows. Its metrics and limitations are documented so the dashboard supports reproducible descriptive analysis.
+
+## 13. References
+
+- Pandas documentation: https://pandas.pydata.org/docs/
+- Streamlit documentation: https://docs.streamlit.io/
+- Plotly Python documentation: https://plotly.com/python/
+- OpenPyXL documentation: https://openpyxl.readthedocs.io/
+- Pytest documentation: https://docs.pytest.org/
