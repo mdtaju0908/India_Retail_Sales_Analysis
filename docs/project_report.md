@@ -131,7 +131,7 @@ Deploy the GitHub `main` branch as a Render **Web Service**. Leave Root Director
 - Start command: `streamlit run app.py --server.address 0.0.0.0 --server.port $PORT --server.headless true`
 - Environment variables: none required
 
-Render service URL: [https://dadv-a6-project.onrender.com](https://dadv-a6-project.onrender.com).
+service URL: [https://dadv-a6-project.mdtaju.tech](https://dadv-a6-project.mdtaju.tech).
 
 The intended custom domain is `dadvproject.mdtaju.tech`. In Render, first add it under **Settings → Custom Domains**. In Cloudflare, create a DNS-only CNAME with Name `dadvproject` and Target `dadv-a6-project.onrender.com` (hostname only; no `https://` or trailing slash). Remove any conflicting AAAA record, then verify the domain in Render. DNS may take a few minutes to propagate. The custom domain should be treated as pending until Render verifies it and issues a valid certificate.
 
