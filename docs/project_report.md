@@ -52,15 +52,7 @@ The app calculates the sales formula check as `Quantity × Unit Price × (1 − 
 
 ## 5. Dashboard design
 
-The dashboard is organized into these sections:
-
-- **Overview:** Sales, profit, orders, quantity, profit margin, monthly sales, and category mix.
-- **Sales trends:** Monthly sales and profit, highest-sales month, and average discount.
-- **Category analysis:** Sales and profit by category, plus top sub-categories.
-- **Region & city:** Regional summaries and top-city comparisons.
-- **Customer segments:** Segment performance and orders by ship mode.
-- **Data quality:** Source and valid row counts, duplicates, negative profit, calculation mismatches, types, missing values, and cleaning rules.
-- **Raw data:** Filtered source rows and CSV download.
+The application presents a single dashboard page rather than switching between separate analysis sections. Four summary cards show Sales, Profit, Orders, and Units Sold. The sidebar keeps the date range, region, city, category, customer segment, and order-ID filters together. A **Compare charts by** selector changes all comparison charts between Sales, Profit, and Orders. The page displays monthly trends, category and sub-category performance, region and city comparisons, customer-segment performance, and ship-mode results together. Data-quality details and filtered raw rows are available in expandable panels below the charts; the raw rows can be downloaded as CSV.
 
 ## 6. Results
 
@@ -146,3 +138,4 @@ This project offers a reproducible way to explore the supplied India-focused ret
 - Plotly Python documentation: https://plotly.com/python/
 - Render custom domains: https://render.com/docs/custom-domains
 - Render Cloudflare DNS configuration: https://render.com/docs/configure-cloudflare-dns
+

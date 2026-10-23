@@ -4,7 +4,7 @@ An interactive Streamlit dashboard for exploring the supplied India-focused reta
 
 ## Dashboard
 
-- Custom domain being configured: `https://dad-a6-project.mdtaju.tech`
+- Custom domain being configured: `https://dadvproject.mdtaju.tech`
 
 The custom domain works after its Cloudflare DNS record is valid and the hostname is added and verified in Render. See [Deployment](#deployment).
 
@@ -12,12 +12,13 @@ The custom domain works after its Cloudflare DNS record is valid and the hostnam
 
 **File:** `data/retail_sales_raw.csv`
 
-The source contains these columns: Order ID, Order Date, Region, City, Customer Segment, Category, Sub-Category, Quantity, Unit Price, Discount, Sales, Profit, and Ship Mode. The dashboard does not load the previous workbook or any other dataset.
+The source contains these columns: Order ID, Order Date, Region, City, Customer Segment, Category, Sub-Category, Quantity, Unit Price, Discount, Sales, Profit, and Ship Mode. The dashboard reads only this CSV file.
 
 The file contains 1,800 order rows dated 1 January 2024 through 30 June 2025. It contains Indian regions and cities, but no Country or Currency column. Accordingly, the dashboard labels monetary figures as source values and does not add a currency symbol or convert values.
 
 ## Features
 
+- One-page dashboard showing all core charts together, with a selector to compare Sales, Profit, or Orders.
 - Summary metrics for sales, profit, orders, units, and profit margin.
 - Monthly sales and profit trends.
 - Category and sub-category comparisons.
@@ -113,3 +114,4 @@ requirements.txt       Python dependencies
 ```
 
 Generated workbooks and other files in `outputs/` are local artifacts and are not included in the Git repository.
+
